@@ -1,18 +1,35 @@
 "use client";
 
 import React, { useState } from "react";
+import instance from "../axios";
+import Link from "next/link";
 
 const Register: React.FC = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    // Handle registration logic here
-    console.log("Username:", username);
-    console.log("Email:", email);
-    console.log("Password:", password);
+    try {
+      const response = await instance.post("/register", {
+        username,
+        email,
+        password,
+      });
+      console.log("Registration successful:", response.data);
+      // Handle successful registration (e.g., redirect to another page)
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(
+          "Registration failed:",
+          (error as any).response?.data || error.message
+        );
+      } else {
+        console.error("Registration failed:", error);
+      }
+      // Handle registration failure (e.g., show error message)
+    }
   };
 
   return (
@@ -82,6 +99,17 @@ const Register: React.FC = () => {
             </button>
           </div>
         </form>
+        <div className="text-center">
+          <p className="text-sm text-gray-600">
+            Already have an account?{" "}
+            <Link
+              href="/login"
+              className="text-indigo-600 hover:text-indigo-500"
+            >
+              Login
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

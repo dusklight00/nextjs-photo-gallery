@@ -1,16 +1,33 @@
 "use client";
 
 import React, { useState } from "react";
+import instance from "../axios";
+import Link from "next/link";
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    // Handle login logic here
-    console.log("Username:", username);
-    console.log("Password:", password);
+    try {
+      const response = await instance.post("/login", {
+        username,
+        password,
+      });
+      console.log("Login successful:", response.data);
+      // Handle successful login (e.g., redirect to another page)
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(
+          "Login failed:",
+          (error as any).response?.data || error.message
+        );
+      } else {
+        console.error("Login failed:", error);
+      }
+      // Handle login failure (e.g., show error message)
+    }
   };
 
   return (
@@ -61,6 +78,17 @@ const Login: React.FC = () => {
             </button>
           </div>
         </form>
+        <div className="text-center">
+          <p className="text-sm text-gray-600">
+            Don't have an account?{" "}
+            <Link
+              href="/register"
+              className="text-indigo-600 hover:text-indigo-500"
+            >
+              Register
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
