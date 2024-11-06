@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDebounce } from "use-debounce";
 
 const Search = () => {
@@ -19,13 +19,6 @@ const Search = () => {
     router.push(`/photos?search=${searchText}`);
     // setSearchVal("");
   };
-
-  useEffect(() => {
-    if (!searchVal) {
-      router.push(`/`);
-      setSearchVal("");
-    }
-  }, [searchVal, router]);
 
   return (
     <div className="flex">
