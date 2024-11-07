@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import instance from "../axios";
-import Link from "next/link";
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -11,6 +10,7 @@ const Login: React.FC = () => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
+      console.log("hi");
       const response = await instance.post("/login", {
         username,
         password,
@@ -78,17 +78,6 @@ const Login: React.FC = () => {
             </button>
           </div>
         </form>
-        <div className="text-center">
-          <p className="text-sm text-gray-600">
-            Don't have an account?{" "}
-            <Link
-              href="/register"
-              className="text-indigo-600 hover:text-indigo-500"
-            >
-              Register
-            </Link>
-          </p>
-        </div>
       </div>
     </div>
   );
