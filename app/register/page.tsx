@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import instance from "../axios";
 import Link from "next/link";
 import { useToast } from "../components/Toast";
+import GoogleLoginButton from "../components/GoogleLoginButton";
 
 const Register: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -111,6 +112,7 @@ const Register: React.FC = () => {
                 Register
               </button>
             </div>
+            <GoogleLoginButton />
           </form>
           <div className="text-center">
             <p className="text-sm text-gray-600">
