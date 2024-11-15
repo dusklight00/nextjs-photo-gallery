@@ -15,7 +15,10 @@ export default function RootLayout({
   const pathname = usePathname();
 
   // Check if the current route is the login or register page
-  const isAuthPage = pathname === "/login" || pathname === "/register";
+  const isAuthPage =
+    pathname === "/login" ||
+    pathname === "/register" ||
+    pathname === "/dashboard";
 
   return (
     <html lang="en">
