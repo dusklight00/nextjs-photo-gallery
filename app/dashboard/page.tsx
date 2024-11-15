@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import instance from "../axios";
 
 const AddImage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -59,6 +60,13 @@ const AddImage = () => {
   );
 };
 
+interface UserDetails {
+  user: {
+    username: string;
+    email: string;
+  };
+}
+
 const Dashboard = () => {
   const accountDetails = {
     username: "john_doe",
@@ -72,6 +80,23 @@ const Dashboard = () => {
     { url: "https://via.placeholder.com/150", title: "Image 4" },
   ];
 
+  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const userId = localStorage.getItem("username");
+        const response = await instance.get(`/user?username=${userId}`);
+        console.log(response.data);
+        setUserDetails(response.data);
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+    };
+
+    fetchUserDetails();
+  }, []);
+
   return (
     <div className="flex min-h-screen">
       <div className="w-1/4 p-4 bg-[#ffffff06] shadow-md flex flex-col gap-4">
@@ -84,10 +109,10 @@ const Dashboard = () => {
           />
           <div>
             <p className="text-lg">
-              <strong>Username:</strong> {accountDetails.username}
+              <strong>Username:</strong> {userDetails?.user.username}
             </p>
             <p className="text-lg">
-              <strong>Email:</strong> {accountDetails.email}
+              <strong>Email:</strong> {userDetails?.user.email}
             </p>
           </div>
         </div>
