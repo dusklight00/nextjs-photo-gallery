@@ -1,24 +1,14 @@
-import { Client } from "pg";
-
-const client = new Client({
-  host: process.env.PGHOST || "localhost",
-  port: parseInt(process.env.PGPORT || "5432", 10),
-  user: process.env.PGUSER,
-  password: process.env.PGPASSWORD,
-  database: process.env.PGDATABASE || "photogalleryapp",
-});
-
-client
-  .connect()
-  .then(() => console.log("Connected to PostgreSQL"))
-  .catch((err) => console.error("Failed to connect to PostgreSQL:", err));
+import { db } from "./drizzle";
+import { usersTable, imagesTable } from "./drizzle/schema";
+import { eq } from "drizzle-orm";
 
 export async function findUserByUsername(username: string) {
   try {
-    const res = await client.query("SELECT * FROM users WHERE username = $1", [
-      username,
-    ]);
-    return res.rows[0];
+    const res = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.username, username));
+    return res[0];
   } catch (err) {
     console.error("Error finding user by username:", err);
     throw err;
@@ -31,11 +21,15 @@ export async function createUser(
   email: string
 ) {
   try {
-    const res = await client.query(
-      "INSERT INTO users (username, password, email) VALUES ($1, $2, $3) RETURNING *",
-      [username, password, email]
-    );
-    return res.rows[0];
+    const res = await db
+      .insert(usersTable)
+      .values({
+        username,
+        password,
+        email,
+      })
+      .execute();
+    return res;
   } catch (err) {
     console.error("Error creating new user:", err);
     throw err;
@@ -49,10 +43,14 @@ export async function addImageEntry(username: string, key: string) {
       throw new Error("User not found");
     }
 
-    const res = await client.query(
-      "INSERT INTO images (user_id, key) VALUES ($1, $2) RETURNING *",
-      [user.id, key]
-    );
+    const res = await db
+      .insert(imagesTable)
+      .values({
+        user_id: user.id,
+        key,
+      })
+      .execute();
+
     return res.rows[0];
   } catch (err) {
     console.error("Error adding image entry:", err);
@@ -67,10 +65,12 @@ export async function getImagesByUsername(username: string) {
       throw new Error("User not found");
     }
 
-    const res = await client.query("SELECT * FROM images WHERE user_id = $1", [
-      user.id,
-    ]);
-    return res.rows;
+    const res = await db
+      .select()
+      .from(imagesTable)
+      .where(eq(imagesTable.user_id, user.id));
+
+    return res;
   } catch (err) {
     console.error("Error getting images by username:", err);
     throw err;
@@ -79,15 +79,14 @@ export async function getImagesByUsername(username: string) {
 
 export async function deleteImageByKey(key: string) {
   try {
-    const res = await client.query(
-      "DELETE FROM images WHERE key = $1 RETURNING *",
-      [key]
-    );
-    return res.rows[0];
+    const res = await db
+      .delete(imagesTable)
+      .where(eq(imagesTable.key, key))
+      .execute();
+
+    return res;
   } catch (err) {
     console.error("Error deleting image by key:", err);
     throw err;
   }
 }
-
-export default client;
