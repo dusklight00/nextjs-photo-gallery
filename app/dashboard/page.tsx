@@ -159,10 +159,19 @@ const Dashboard = () => {
         </div>
         <AddImage />
         <button
-          // onClick={() => (window.location.href = "/")}
+          onClick={() => (window.location.href = "/")}
           className="w-full py-2 px-4 bg-gray-500 text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75"
         >
           Back to Home
+        </button>
+        <button
+          onClick={() => {
+            localStorage.removeItem("userId");
+            window.location.href = "/";
+          }}
+          className="w-full py-2 px-4 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75"
+        >
+          Logout
         </button>
       </div>
       <div className="w-3/4 p-4">
