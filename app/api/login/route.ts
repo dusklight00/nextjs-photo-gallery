@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { findUserByUsername } from "@/app/database";
 
-export const GET = async (req: NextRequest) => {
-  const { searchParams } = new URL(req.url);
-  const username = searchParams.get("username");
-  const password = searchParams.get("password");
+export const POST = async (req: NextRequest) => {
+  const formData = await req.formData();
+  const { username, password } = Object.fromEntries(formData.entries());
 
   if (!username || !password) {
     return NextResponse.json(
@@ -13,7 +12,7 @@ export const GET = async (req: NextRequest) => {
     );
   }
 
-  const user = await findUserByUsername(username);
+  const user = await findUserByUsername(username as string);
 
   if (!user) {
     return NextResponse.json(
