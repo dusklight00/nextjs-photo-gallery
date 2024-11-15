@@ -112,7 +112,8 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const userId = localStorage.getItem("username");
+        const username = localStorage.getItem("userId");
+        const userId = username ? encodeURIComponent(username) : "";
         const response = await instance.get(`/user?username=${userId}`);
         console.log(response.data);
         setUserDetails(response.data);
@@ -127,7 +128,8 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const userId = localStorage.getItem("username");
+        const username = localStorage.getItem("userId");
+        const userId = username ? encodeURIComponent(username) : "";
         const response = await instance.get(`/images?username=${userId}`);
         setImages(response.data.images);
       } catch (error) {

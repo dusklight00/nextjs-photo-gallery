@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import instance from "../axios";
 import { useToast } from "../components/Toast";
 import Link from "next/link";
+import GoogleLoginButton from "../components/GoogleLoginButton";
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -49,6 +50,7 @@ const Login: React.FC = () => {
           <h2 className="text-2xl font-bold text-center text-gray-900">
             Login
           </h2>
+          <GoogleLoginButton />
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label

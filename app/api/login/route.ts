@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { findUserByUsername } from "@/app/database";
 
 export const POST = async (req: NextRequest) => {
+  console.log("hi");
+
   try {
     const { username, password } = await req.json();
 
