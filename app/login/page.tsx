@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import instance from "../axios";
 import { useToast } from "../components/Toast";
+import Link from "next/link";
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -22,6 +23,9 @@ const Login: React.FC = () => {
       // Handle successful login (e.g., redirect to another page)
 
       showToast("Login successful!", "success");
+
+      localStorage.setItem("userId", response.data.user.username);
+      window.location.href = "/";
     } catch (error) {
       if (error instanceof Error) {
         console.error(
@@ -31,6 +35,8 @@ const Login: React.FC = () => {
       } else {
         console.error("Login failed:", error);
       }
+
+      showToast("Login failed!", "error");
       // Handle login failure (e.g., show error message)
     }
   };
@@ -85,6 +91,17 @@ const Login: React.FC = () => {
               >
                 Login
               </button>
+            </div>
+            <div className="text-center">
+              <p className="text-sm text-gray-600">
+                Don't have an account?{" "}
+                <Link
+                  href="/register"
+                  className="text-indigo-600 hover:text-indigo-500"
+                >
+                  Register
+                </Link>
+              </p>
             </div>
           </form>
         </div>

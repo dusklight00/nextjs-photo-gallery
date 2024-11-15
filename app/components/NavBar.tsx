@@ -19,8 +19,17 @@ const NavBar = () => {
           </Link> */}
           <div className="text-3xl font-bold m-4">Photo Gallery</div>
         </div>
-        <div className="flex justify-center mx-6">
+        <div className="flex justify-center mx-6 gap-2">
           <Search />
+          <Link href="/dashboard">
+            <img
+              className="rounded-full"
+              src="https://via.placeholder.com/50"
+              alt="Profile Photo"
+              width={50}
+              height={50}
+            />
+          </Link>
         </div>
       </div>
     </div>
