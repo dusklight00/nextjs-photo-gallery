@@ -77,4 +77,17 @@ export async function getImagesByUsername(username: string) {
   }
 }
 
+export async function deleteImageByKey(key: string) {
+  try {
+    const res = await client.query(
+      "DELETE FROM images WHERE key = $1 RETURNING *",
+      [key]
+    );
+    return res.rows[0];
+  } catch (err) {
+    console.error("Error deleting image by key:", err);
+    throw err;
+  }
+}
+
 export default client;

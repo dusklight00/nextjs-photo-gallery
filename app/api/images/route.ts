@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { findUserByUsername, getImagesByUsername } from "@/app/database";
+import { deleteImageByKey } from "@/app/database";
 
 export const GET = async (req: NextRequest) => {
   const { searchParams } = new URL(req.url);
@@ -31,4 +32,30 @@ export const GET = async (req: NextRequest) => {
   }
 
   return NextResponse.json({ success: true, images });
+};
+
+export const DELETE = async (req: NextRequest) => {
+  const { searchParams } = new URL(req.url);
+  const key = searchParams.get("key");
+
+  if (!key) {
+    return NextResponse.json(
+      { success: false, message: "Image key is required" },
+      { status: 400 }
+    );
+  }
+
+  const deleted = await deleteImageByKey(key);
+
+  if (!deleted) {
+    return NextResponse.json(
+      { success: false, message: "Image not found or could not be deleted" },
+      { status: 404 }
+    );
+  }
+
+  return NextResponse.json({
+    success: true,
+    message: "Image deleted successfully",
+  });
 };
