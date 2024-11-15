@@ -4,6 +4,8 @@ import {
   GetObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
+import { addImageEntry } from "@/app/database";
+import { v4 as uuidv4 } from "uuid";
 
 const s3 = new S3Client({
   region: "auto",
@@ -17,19 +19,22 @@ const s3 = new S3Client({
 export const POST = async (req: NextRequest) => {
   const formData = await req.formData();
   const file: File = formData.get("file") as File;
+  const key = uuidv4();
+  const username = formData.get("username") as string;
   const bytes = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
 
   const putObjectCommand = new PutObjectCommand({
     Bucket: process.env.AWS_S3_BUCKET ?? "",
-    Key: file.name,
+    Key: key,
     Body: buffer,
   });
 
   try {
     const response = await s3.send(putObjectCommand);
+    await addImageEntry(username, key);
     console.log(response);
-    return NextResponse.json({ success: true }, { status: 200 });
+    return NextResponse.json({ success: true, key: key }, { status: 200 });
   } catch (error) {
     console.log(error);
     return NextResponse.json({ success: false }, { status: 500 });
