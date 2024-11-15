@@ -73,14 +73,15 @@ const Dashboard = () => {
     email: "john_doe@example.com",
   };
 
-  const images = [
-    { url: "https://via.placeholder.com/150", title: "Image 1" },
-    { url: "https://via.placeholder.com/150", title: "Image 2" },
-    { url: "https://via.placeholder.com/150", title: "Image 3" },
-    { url: "https://via.placeholder.com/150", title: "Image 4" },
-  ];
+  // const images = [
+  //   { url: "https://via.placeholder.com/150", title: "Image 1" },
+  //   { url: "https://via.placeholder.com/150", title: "Image 2" },
+  //   { url: "https://via.placeholder.com/150", title: "Image 3" },
+  //   { url: "https://via.placeholder.com/150", title: "Image 4" },
+  // ];
 
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+  const [images, setImages] = useState<{ user_id: string; key: string }[]>([]);
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -95,6 +96,20 @@ const Dashboard = () => {
     };
 
     fetchUserDetails();
+  }, []);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const userId = localStorage.getItem("username");
+        const response = await instance.get(`/images?username=${userId}`);
+        setImages(response.data.images);
+      } catch (error) {
+        console.error("Error fetching images:", error);
+      }
+    };
+
+    fetchImages();
   }, []);
 
   return (
@@ -136,8 +151,8 @@ const Dashboard = () => {
                 Delete
               </button>
               <img
-                src={image.url}
-                alt={image.title}
+                src={`http://localhost:3000/api/fileupload?key=${image.key}`}
+                // alt={image.title}
                 className="w-full h-48 object-cover rounded"
               />
             </div>
