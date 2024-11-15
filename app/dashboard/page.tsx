@@ -2,10 +2,13 @@
 
 import React, { useState, useEffect } from "react";
 import instance from "../axios";
+import { BASE_URL } from "../axios";
+import { useToast } from "../components/Toast";
 
 const AddImage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
+  const { showToast, ToastContainer } = useToast();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -13,16 +16,39 @@ const AddImage = () => {
     }
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (file) {
-      // Handle file upload logic here
-      console.log("Uploading file:", file);
-      setIsModalOpen(false);
+      const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+      if (!allowedTypes.includes(file.type)) {
+        showToast("Only image files are allowed!", "error");
+        return;
+      }
+
+      try {
+        const formData = new FormData();
+        const username = localStorage.getItem("userId");
+        formData.append("file", file);
+        formData.append("username", username || "");
+
+        const response = await instance.post("/fileupload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        console.log("File uploaded successfully:", response.data);
+        // setIsModalOpen(false);
+        showToast("Image uploaded successfully!", "success");
+        window.location.reload();
+      } catch (error) {
+        console.error("Error uploading file:", error);
+      }
     }
   };
 
   return (
     <>
+      <ToastContainer />
       <button
         className="w-full py-2 px-4 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
         onClick={() => setIsModalOpen(true)}
@@ -151,7 +177,7 @@ const Dashboard = () => {
                 Delete
               </button>
               <img
-                src={`http://localhost:3000/api/fileupload?key=${image.key}`}
+                src={`${BASE_URL}/api/fileupload?key=${image.key}`}
                 // alt={image.title}
                 className="w-full h-48 object-cover rounded"
               />
