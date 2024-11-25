@@ -51,7 +51,7 @@ export async function addImageEntry(username: string, key: string) {
       })
       .execute();
 
-    return res.rows[0];
+    return res;
   } catch (err) {
     console.error("Error adding image entry:", err);
     throw err;

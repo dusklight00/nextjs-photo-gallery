@@ -1,6 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { findUserByUsername, getImagesByUsername } from "@/app/database";
 import { deleteImageByKey } from "@/app/database";
+import { DeleteObjectCommand, S3Client } from "@aws-sdk/client-s3";
+
+const s3 = new S3Client({
+  region: "auto",
+  endpoint: process.env.AWS_S3_ENDPOINT ?? "",
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID ?? "",
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY ?? "",
+  },
+});
 
 export const GET = async (req: NextRequest) => {
   const { searchParams } = new URL(req.url);
@@ -42,6 +52,21 @@ export const DELETE = async (req: NextRequest) => {
     return NextResponse.json(
       { success: false, message: "Image key is required" },
       { status: 400 }
+    );
+  }
+
+  const deleteObjectCommand = new DeleteObjectCommand({
+    Bucket: process.env.AWS_S3_BUCKET ?? "",
+    Key: key,
+  });
+
+  try {
+    await s3.send(deleteObjectCommand);
+  } catch (error) {
+    console.error("Error deleting image:", error);
+    return NextResponse.json(
+      { success: false, message: "Image could not be deleted" },
+      { status: 500 }
     );
   }
 
